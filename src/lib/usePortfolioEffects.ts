@@ -27,6 +27,16 @@ export function usePortfolioEffects(enabled: boolean) {
           ".portfolio-project-card",
           ".resume_item",
           ".portfolio-skill-card",
+          ".project-detail-copy",
+          ".project-detail-visual",
+          ".detail-meta-grid article",
+          ".detail-story-block",
+          ".detail-impact-band article",
+          ".detail-gallery figure",
+          ".detail-process-list article",
+          ".detail-stack-card",
+          ".detail-stack-notes article",
+          ".detail-related-card",
           ".contact-info-list li",
           ".portfolio-contact .contact-form-box",
           ".portfolio-footer",
@@ -47,7 +57,7 @@ export function usePortfolioEffects(enabled: boolean) {
             }
           });
         },
-        { rootMargin: "0px 0px -12% 0px", threshold: 0.16 },
+        { rootMargin: "0px 0px -4% 0px", threshold: 0.06 },
       );
       revealItems.forEach((item) => revealObserver.observe(item));
       cleanups.push(() => revealObserver.disconnect());
@@ -91,7 +101,7 @@ export function usePortfolioEffects(enabled: boolean) {
           }
         });
       },
-      { threshold: 0.35 },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.2 },
     );
     progressCards.forEach((card) => progressObserver.observe(card));
     cleanups.push(() => progressObserver.disconnect());
@@ -147,24 +157,40 @@ export function usePortfolioEffects(enabled: boolean) {
     const progressButton = document.querySelector<HTMLElement>(".progress-wrap");
     const progressPath = document.querySelector<SVGPathElement>(".progress-wrap path");
     const pathLength = progressPath?.getTotalLength() ?? 0;
+    let scrollProgressFrame = 0;
+    let progressButtonVisible = false;
     if (progressPath && pathLength) {
       progressPath.style.strokeDasharray = `${pathLength} ${pathLength}`;
       progressPath.style.strokeDashoffset = `${pathLength}`;
     }
 
     const updateScrollProgress = () => {
+      scrollProgressFrame = 0;
       const scrollTop = window.scrollY;
       const scrollable = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const progress = clamp(scrollTop / scrollable, 0, 1);
       if (progressPath && pathLength) {
         progressPath.style.strokeDashoffset = `${pathLength - progress * pathLength}`;
       }
-      progressButton?.classList.toggle("active-progress", scrollTop > 120);
+      const shouldShowProgressButton = scrollTop > 120;
+      if (shouldShowProgressButton !== progressButtonVisible) {
+        progressButtonVisible = shouldShowProgressButton;
+        progressButton?.classList.toggle("active-progress", shouldShowProgressButton);
+      }
     };
+    const requestScrollProgressUpdate = () => {
+      if (scrollProgressFrame) return;
+      scrollProgressFrame = requestAnimationFrame(updateScrollProgress);
+    };
+    const onProgressClick = () => window.scrollTo({ top: 0, behavior: "smooth" });
     updateScrollProgress();
-    window.addEventListener("scroll", updateScrollProgress, { passive: true });
-    progressButton?.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
-    cleanups.push(() => window.removeEventListener("scroll", updateScrollProgress));
+    window.addEventListener("scroll", requestScrollProgressUpdate, { passive: true });
+    progressButton?.addEventListener("click", onProgressClick);
+    cleanups.push(() => {
+      window.removeEventListener("scroll", requestScrollProgressUpdate);
+      progressButton?.removeEventListener("click", onProgressClick);
+      if (scrollProgressFrame) cancelAnimationFrame(scrollProgressFrame);
+    });
 
     const cursor = document.querySelector<HTMLElement>("#magic-cursor");
     const ball = document.querySelector<HTMLElement>("#ball");
@@ -176,22 +202,37 @@ export function usePortfolioEffects(enabled: boolean) {
       let raf = 0;
 
       const animateCursor = () => {
-        cursorX += (mouseX - cursorX) * 0.18;
-        cursorY += (mouseY - cursorY) * 0.18;
+        const deltaX = mouseX - cursorX;
+        const deltaY = mouseY - cursorY;
+        cursorX += deltaX * 0.18;
+        cursorY += deltaY * 0.18;
         ball.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
-        raf = requestAnimationFrame(animateCursor);
+        if (Math.abs(deltaX) > 0.18 || Math.abs(deltaY) > 0.18) {
+          raf = requestAnimationFrame(animateCursor);
+        } else {
+          raf = 0;
+        }
+      };
+      const requestCursorFrame = () => {
+        if (!raf) raf = requestAnimationFrame(animateCursor);
       };
       const onPointerMove = (event: PointerEvent) => {
         mouseX = event.clientX;
         mouseY = event.clientY;
         cursor.classList.add("is-active");
+        requestCursorFrame();
       };
-      const onPointerLeave = () => cursor.classList.remove("is-active", "is-view");
-      const onPointerEnter = () => cursor.classList.add("is-active");
+      const onPointerLeave = () => {
+        cursor.classList.remove("is-active", "is-view");
+        requestCursorFrame();
+      };
+      const onPointerEnter = () => {
+        cursor.classList.add("is-active");
+        requestCursorFrame();
+      };
       window.addEventListener("pointermove", onPointerMove);
       document.addEventListener("mouseleave", onPointerLeave);
       document.addEventListener("mouseenter", onPointerEnter);
-      raf = requestAnimationFrame(animateCursor);
 
       const hoverTargets = Array.from(document.querySelectorAll<HTMLElement>("a, button"));
       hoverTargets.forEach((target) => {

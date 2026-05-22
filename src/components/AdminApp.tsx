@@ -356,6 +356,10 @@ function ProfileForm({ profile, onRefresh }: { profile: Profile; onRefresh: () =
           <input value={form.hero_image_url} onChange={(event) => setForm({ ...form, hero_image_url: event.target.value })} />
         </label>
         <label>
+          Resume URL
+          <input value={form.resume_url} onChange={(event) => setForm({ ...form, resume_url: event.target.value })} />
+        </label>
+        <label>
           Email
           <input value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} />
         </label>

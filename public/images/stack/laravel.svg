@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Laravel">
+  <rect width="96" height="96" rx="24" fill="#210f13"/>
+  <path d="M24 28l24-14 24 14v28L48 70 24 56V28z" fill="none" stroke="#ff2d20" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M24 28l24 14 24-14M48 42v28" fill="none" stroke="#ff7a70" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
