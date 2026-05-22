@@ -345,7 +345,7 @@ function Marquee({ roles }: { roles: string[] }) {
   ];
 
   return (
-    <section className="tj-maquee-section style-4 portfolio-marquee">
+    <section className="tj-maquee-section style-4 portfolio-marquee mt-5">
       <div className="portfolio-marquee-track">
         {[...words, ...words].map((word, index) => (
           <div className="marquee-box" key={`${word}-${index}`}>
