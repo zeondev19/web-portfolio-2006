@@ -1145,8 +1145,10 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
   border-radius: 18px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.035);
   display: block;
+  max-width: none;
   overflow: hidden;
   position: relative;
+  width: 100%;
 }
 
 .portfolio-project-card .tj-project-4-thumb::after {
