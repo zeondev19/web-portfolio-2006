@@ -1861,6 +1861,114 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
     display: none;
   }
 
+  .portfolio-hero {
+    min-height: auto;
+  }
+
+  .portfolio-hero .tj-hero-4-title {
+    font-size: 76px;
+    line-height: 0.96;
+    max-width: 820px;
+    overflow-wrap: break-word;
+  }
+
+  .portfolio-hero-headline {
+    font-size: 26px;
+    max-width: 680px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-wrapper {
+    align-items: center;
+    display: grid;
+    gap: 28px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    margin-top: 44px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-thumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 0;
+    max-width: min(100%, 420px);
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-thumb .hero-tilt {
+    flex: 0 0 100%;
+    margin: 0 auto;
+    max-width: max-content;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-thumb .hero-tilt img {
+    height: 390px;
+    width: 320px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-thumb-shape-1,
+  .portfolio-hero .tj-hero-4-bottom-thumb-shape-2 {
+    bottom: auto;
+    left: auto;
+    position: static;
+    right: auto;
+    top: auto;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-tag {
+    background: rgba(15, 17, 24, 0.72);
+    border-color: rgba(255, 255, 255, 0.68);
+    padding: 11px 17px;
+  }
+
+  .portfolio-hero-copy {
+    left: auto;
+    max-width: 680px;
+    position: static !important;
+    text-align: center;
+    top: auto;
+    width: 100%;
+  }
+
+  .portfolio-meta span,
+  .portfolio-hero-actions {
+    justify-content: center;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 820px;
+    position: static !important;
+    right: auto;
+    top: auto;
+    width: 100%;
+    z-index: auto;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item .funfact-item {
+    gap: 10px;
+    justify-content: center;
+    min-height: 74px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item .number {
+    font-size: 44px;
+    line-height: 1;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item .text {
+    font-size: 15px;
+    line-height: 1.35;
+    margin-top: 0;
+  }
+
   .portfolio-public .tj-project-4-wrappper {
     grid-template-columns: 1fr;
   }
@@ -1891,6 +1999,32 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
 }
 
 @media (max-width: 900px) {
+  .portfolio-hero .tj-hero-4-title {
+    font-size: 58px;
+  }
+
+  .portfolio-hero-headline {
+    font-size: 24px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-wrapper {
+    gap: 24px;
+    margin-top: 36px;
+  }
+
+  .portfolio-hero-copy p {
+    font-size: 16px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter {
+    grid-template-columns: 1fr;
+    max-width: 420px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item .funfact-item {
+    min-height: auto;
+  }
+
   .detail-meta-grid,
   .detail-section-grid,
   .detail-impact-band,
@@ -1927,10 +2061,107 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
   }
 }
 
-@media (max-width: 575px) {
+@media (min-width: 768px) and (max-width: 1199px) {
+  .portfolio-hero .tj-hero-4-bottom-wrapper {
+    align-items: center;
+    column-gap: 34px;
+    grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1fr);
+    row-gap: 34px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-thumb {
+    grid-column: 1;
+    justify-self: center;
+    max-width: 360px;
+  }
+
   .portfolio-hero .tj-hero-4-bottom-thumb .hero-tilt img {
-    height: min(94vw, 390px);
-    width: min(78vw, 310px);
+    height: 380px;
+    width: 300px;
+  }
+
+  .portfolio-hero-copy {
+    grid-column: 2;
+    justify-self: start;
+    max-width: 460px;
+    text-align: left;
+  }
+
+  .portfolio-meta span,
+  .portfolio-hero-actions {
+    justify-content: flex-start;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 760px;
+  }
+}
+
+@media (max-width: 575px) {
+  .portfolio-hero {
+    padding-top: 96px;
+  }
+
+  .portfolio-hero .tj-hero-4-subtitle {
+    margin-bottom: 14px;
+  }
+
+  .portfolio-hero .tj-hero-4-title {
+    font-size: 42px;
+    margin-bottom: 12px;
+  }
+
+  .portfolio-hero-headline {
+    font-size: 21px;
+    line-height: 1.25;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-wrapper {
+    gap: 22px;
+    margin-top: 24px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-thumb .hero-tilt img {
+    height: min(78vw, 310px);
+    width: min(64vw, 250px);
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-tag {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+
+  .portfolio-hero-copy {
+    max-width: 100%;
+  }
+
+  .portfolio-hero-copy p {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .portfolio-hero-actions {
+    gap: 10px;
+  }
+
+  .portfolio-hero-actions .tj-btn-primary,
+  .portfolio-resume-link {
+    min-height: 44px;
+    padding: 11px 15px;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item .funfact-item {
+    flex-direction: row !important;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item .number {
+    font-size: 38px !important;
+  }
+
+  .portfolio-hero .tj-hero-4-bottom-counter-item .text {
+    font-size: 14px;
   }
 
   .portfolio-project-card {
