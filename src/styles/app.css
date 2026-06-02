@@ -590,6 +590,21 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
   color: var(--portfolio-accent-2);
 }
 
+.portfolio-projects-more {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 36px;
+  text-align: center;
+}
+
+.portfolio-projects-more span {
+  color: var(--portfolio-muted);
+  font-weight: 700;
+}
+
 .portfolio-skill-card .item_bar {
   background: rgba(255, 255, 255, 0.1);
 }
@@ -1439,6 +1454,50 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
   z-index: 1;
 }
 
+.projects-index-hero {
+  align-items: end;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  margin-bottom: 42px;
+}
+
+.projects-index-hero span {
+  color: var(--portfolio-accent);
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.projects-index-hero h1 {
+  font-size: clamp(54px, 8vw, 104px);
+  line-height: 0.96;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+
+.projects-index-hero p {
+  color: var(--portfolio-muted);
+  font-size: clamp(17px, 1.8vw, 22px);
+  line-height: 1.65;
+  margin: 18px 0 0;
+  max-width: 780px;
+}
+
+.projects-index-hero strong {
+  background: rgba(156, 255, 110, 0.08);
+  border: 1px solid rgba(156, 255, 110, 0.18);
+  border-radius: 999px;
+  color: var(--portfolio-accent);
+  display: inline-flex;
+  font-size: 15px;
+  font-weight: 900;
+  padding: 11px 15px;
+  white-space: nowrap;
+}
+
 .detail-back-link,
 .detail-secondary-link,
 .detail-related-heading a {
@@ -2043,6 +2102,11 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
     min-height: 320px;
   }
 
+  .projects-index-hero {
+    align-items: start;
+    grid-template-columns: 1fr;
+  }
+
   .admin-shell {
     display: block;
   }
@@ -2200,6 +2264,14 @@ body.portfolio-effects-mounted .heroAnimation.activeAnimation .tj-hero-4-bottom-
 
   .project-detail-page {
     padding: 120px 0 70px;
+  }
+
+  .projects-index-hero {
+    margin-bottom: 30px;
+  }
+
+  .projects-index-hero h1 {
+    font-size: clamp(42px, 13vw, 58px);
   }
 
   .project-detail-title-row {

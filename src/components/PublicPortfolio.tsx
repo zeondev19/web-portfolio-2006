@@ -25,12 +25,14 @@ type PublicPortfolioProps = {
   loading: boolean;
 };
 
+const HOMEPAGE_PROJECT_LIMIT = 4;
+
 const navItems = [
-  ["Services", "#services"],
-  ["Projects", "#projects"],
-  ["Resume", "#resume"],
-  ["Skills", "#skills"],
-  ["Contact", "#contact"],
+  { label: "Services", href: "#services", innerHref: "/#services" },
+  { label: "Projects", href: "/projects", innerHref: "/projects" },
+  { label: "Resume", href: "#resume", innerHref: "/#resume" },
+  { label: "Skills", href: "#skills", innerHref: "/#skills" },
+  { label: "Contact", href: "#contact", innerHref: "/#contact" },
 ];
 
 const socialIcon = (name: string) => {
@@ -214,8 +216,6 @@ const fallbackDetail = (project: Project): CaseStudyDetail => ({
 });
 
 function Header({ links, isDetail = false }: { links: SocialLinks; isDetail?: boolean }) {
-  const navPrefix = isDetail ? "/" : "";
-
   return (
     <header className="tj-header-area header-3 header-4 header-absolute portfolio-header">
       <div className="container">
@@ -225,9 +225,9 @@ function Header({ links, isDetail = false }: { links: SocialLinks; isDetail?: bo
               ZD
             </a>
             <nav className="portfolio-nav" aria-label="Primary navigation">
-              {navItems.map(([label, href]) => (
-                <a href={`${navPrefix}${href}`} key={href}>
-                  {label}
+              {navItems.map((item) => (
+                <a href={isDetail ? item.innerHref : item.href} key={item.label}>
+                  {item.label}
                 </a>
               ))}
             </nav>
@@ -400,7 +400,67 @@ function projectImage(project: Project) {
   return project.image_url || project.image_path || "/images/1_1.jpg";
 }
 
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <article
+      className="tj-project-4-item portfolio-project-card tilt-card"
+      data-tilt
+      data-tilt-max="12"
+      data-tilt-scale="1.025"
+      key={project.id ?? project.slug}
+    >
+      <a className="project-card-media-link" href={`/projects/${project.slug}`} data-cursor="View Detail">
+        <span className="tj-project-4-thumb">
+          <img src={projectImage(project)} alt={project.title} decoding="async" />
+        </span>
+      </a>
+      <div className="tj-project-4-content">
+        <span className="tj-project-4-subtitle">
+          {project.tech_stack?.[0] ?? "Project"}
+        </span>
+        <h4 className="tj-project-4-title">
+          <a href={`/projects/${project.slug}`}>{project.title}</a>
+        </h4>
+        <p>{project.description}</p>
+        <div className="portfolio-tags">
+          {project.tech_stack.map((tech) => (
+            <span key={tech}>{tech}</span>
+          ))}
+        </div>
+        <div className="portfolio-card-actions">
+          <a href={`/projects/${project.slug}`}>
+            Case Study <ArrowUpRight size={16} />
+          </a>
+          {project.project_url && project.project_url !== "#" ? (
+            <a href={project.project_url} target="_blank" rel="noreferrer">
+              Live <ArrowUpRight size={16} />
+            </a>
+          ) : null}
+          {project.repository_url && project.repository_url !== "#" ? (
+            <a href={project.repository_url} target="_blank" rel="noreferrer">
+              Code <Github size={16} />
+            </a>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function ProjectGrid({ className = "", projects }: { className?: string; projects: Project[] }) {
+  return (
+    <div className={`tj-project-4-wrappper${className ? ` ${className}` : ""}`}>
+      {projects.map((project) => (
+        <ProjectCard project={project} key={project.id ?? project.slug} />
+      ))}
+    </div>
+  );
+}
+
 function Projects({ content }: { content: PortfolioContent }) {
+  const featuredProjects = content.projects.slice(0, HOMEPAGE_PROJECT_LIMIT);
+  const remainingProjects = Math.max(content.projects.length - featuredProjects.length, 0);
+
   return (
     <section className="tj-project-4-area" id="projects">
       <div className="container">
@@ -412,54 +472,46 @@ function Projects({ content }: { content: PortfolioContent }) {
         </div>
         <div className="row">
           <div className="col">
-            <div className="tj-project-4-wrappper">
-              {content.projects.map((project) => (
-                <article
-                  className="tj-project-4-item portfolio-project-card tilt-card"
-                  data-tilt
-                  data-tilt-max="12"
-                  data-tilt-scale="1.025"
-                  key={project.id ?? project.slug}
-                >
-                  <a className="project-card-media-link" href={`/projects/${project.slug}`} data-cursor="View Detail">
-                    <span className="tj-project-4-thumb">
-                      <img src={projectImage(project)} alt={project.title} decoding="async" />
-                    </span>
-                  </a>
-                  <div className="tj-project-4-content">
-                    <span className="tj-project-4-subtitle">
-                      {project.tech_stack?.[0] ?? "Project"}
-                    </span>
-                    <h4 className="tj-project-4-title">
-                      <a href={`/projects/${project.slug}`}>{project.title}</a>
-                    </h4>
-                    <p>{project.description}</p>
-                    <div className="portfolio-tags">
-                      {project.tech_stack.map((tech) => (
-                        <span key={tech}>{tech}</span>
-                      ))}
-                    </div>
-                    <div className="portfolio-card-actions">
-                      <a href={`/projects/${project.slug}`}>
-                        Case Study <ArrowUpRight size={16} />
-                      </a>
-                      {project.project_url && project.project_url !== "#" ? (
-                        <a href={project.project_url} target="_blank" rel="noreferrer">
-                          Live <ArrowUpRight size={16} />
-                        </a>
-                      ) : null}
-                      {project.repository_url && project.repository_url !== "#" ? (
-                        <a href={project.repository_url} target="_blank" rel="noreferrer">
-                          Code <Github size={16} />
-                        </a>
-                      ) : null}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <ProjectGrid projects={featuredProjects} />
+            {remainingProjects ? (
+              <div className="portfolio-projects-more">
+                <a className="btn tj-btn-primary" href="/projects">
+                  View all projects <ArrowUpRight size={18} />
+                </a>
+                <span>
+                  {remainingProjects} more {remainingProjects === 1 ? "case study" : "case studies"} in the project library
+                </span>
+              </div>
+            ) : null}
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function ProjectsIndexPage({ content }: { content: PortfolioContent }) {
+  const projectCountLabel = `${content.projects.length} ${content.projects.length === 1 ? "project" : "projects"}`;
+
+  return (
+    <section className="project-detail-page projects-index-page" id="top">
+      <div className="project-detail-bg" aria-hidden="true" />
+      <div className="container">
+        <a className="detail-back-link" href="/#projects">
+          <ArrowLeft size={18} /> Back to homepage
+        </a>
+        <div className="projects-index-hero">
+          <div>
+            <span>Project Library</span>
+            <h1>All Case Studies</h1>
+            <p>
+              A complete view of the portfolio work, from product demos and business websites to form systems and
+              integration-ready builds.
+            </p>
+          </div>
+          <strong>{projectCountLabel}</strong>
+        </div>
+        <ProjectGrid className="projects-index-grid" projects={content.projects} />
       </div>
     </section>
   );
@@ -473,7 +525,7 @@ function ProjectNotFound({ projects }: { projects: Project[] }) {
   return (
     <section className="project-detail-page project-detail-empty">
       <div className="container">
-        <a className="detail-back-link" href="/#projects">
+        <a className="detail-back-link" href="/projects">
           <ArrowLeft size={18} /> Back to projects
         </a>
         <div className="project-detail-empty-box">
@@ -501,7 +553,7 @@ function ProjectDetailPage({ content, project }: { content: PortfolioContent; pr
     <section className="project-detail-page" id="top">
       <div className="project-detail-bg" aria-hidden="true" />
       <div className="container">
-        <a className="detail-back-link" href="/#projects">
+        <a className="detail-back-link" href="/projects">
           <ArrowLeft size={18} /> Back to projects
         </a>
 
@@ -638,7 +690,7 @@ function ProjectDetailPage({ content, project }: { content: PortfolioContent; pr
           <div className="detail-related">
             <div className="detail-related-heading">
               <h2>More case studies</h2>
-              <a href="/#projects">View all <ArrowUpRight size={17} /></a>
+              <a href="/projects">View all <ArrowUpRight size={17} /></a>
             </div>
             <div className="detail-related-grid">
               {relatedProjects.map((item) => (
@@ -908,10 +960,13 @@ function Footer({ content }: { content: PortfolioContent }) {
 
 export default function PublicPortfolio({ content, loading }: PublicPortfolioProps) {
   usePortfolioEffects(!loading);
-  const projectMatch = window.location.pathname.match(/^\/projects\/([^/]+)/);
+  const pathname = window.location.pathname;
+  const isProjectsIndex = pathname === "/projects" || pathname === "/projects/";
+  const projectMatch = pathname.match(/^\/projects\/([^/]+)/);
   const projectSlug = projectMatch?.[1] ? decodeURIComponent(projectMatch[1]) : "";
   const activeProject = projectSlug ? content.projects.find((project) => project.slug === projectSlug) : null;
   const isProjectDetail = Boolean(projectSlug);
+  const isInnerPage = isProjectDetail || isProjectsIndex;
 
   return (
     <div className="portfolio-public">
@@ -935,7 +990,7 @@ export default function PublicPortfolio({ content, loading }: PublicPortfolioPro
           <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
         </svg>
       </button>
-      <Header links={content.profile.social_links} isDetail={isProjectDetail} />
+      <Header links={content.profile.social_links} isDetail={isInnerPage} />
       {loading ? <div className="portfolio-loading">Loading portfolio...</div> : null}
       <main className="site-content" id="content">
         {isProjectDetail ? (
@@ -944,6 +999,8 @@ export default function PublicPortfolio({ content, loading }: PublicPortfolioPro
           ) : (
             <ProjectNotFound projects={content.projects} />
           )
+        ) : isProjectsIndex ? (
+          <ProjectsIndexPage content={content} />
         ) : (
           <>
             <Hero content={content} />
