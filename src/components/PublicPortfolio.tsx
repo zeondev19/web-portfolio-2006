@@ -460,6 +460,9 @@ function ProjectGrid({ className = "", projects }: { className?: string; project
 function Projects({ content }: { content: PortfolioContent }) {
   const featuredProjects = content.projects.slice(0, HOMEPAGE_PROJECT_LIMIT);
   const remainingProjects = Math.max(content.projects.length - featuredProjects.length, 0);
+  const projectLibraryNote = remainingProjects
+    ? `${remainingProjects} more ${remainingProjects === 1 ? "case study" : "case studies"} in the project library`
+    : "Browse the full project library";
 
   return (
     <section className="tj-project-4-area" id="projects">
@@ -473,16 +476,12 @@ function Projects({ content }: { content: PortfolioContent }) {
         <div className="row">
           <div className="col">
             <ProjectGrid projects={featuredProjects} />
-            {remainingProjects ? (
-              <div className="portfolio-projects-more">
-                <a className="btn tj-btn-primary" href="/projects">
-                  View all projects <ArrowUpRight size={18} />
-                </a>
-                <span>
-                  {remainingProjects} more {remainingProjects === 1 ? "case study" : "case studies"} in the project library
-                </span>
-              </div>
-            ) : null}
+            <div className="portfolio-projects-more">
+              <a className="btn tj-btn-primary" href="/projects">
+                View all projects <ArrowUpRight size={18} />
+              </a>
+              <span>{projectLibraryNote}</span>
+            </div>
           </div>
         </div>
       </div>
