@@ -39,6 +39,18 @@ const tabs: Array<{ id: AdminTab; label: string; icon: JSX.Element }> = [
   { id: "messages", label: "Messages", icon: <Inbox size={18} /> },
 ];
 
+const ADMIN_IDLE_TIMEOUT_MS = 5 * 60 * 1000;
+const ADMIN_IDLE_LOGOUT_NOTICE_KEY = "portfolio_admin_idle_logout";
+const adminActivityEvents = [
+  "click",
+  "keydown",
+  "mousemove",
+  "mousedown",
+  "scroll",
+  "touchstart",
+  "wheel",
+] as const;
+
 function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <main className="admin-page">
@@ -47,16 +59,87 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function useAdminIdleLogout(enabled: boolean) {
+  useEffect(() => {
+    if (!enabled || !supabase) return;
+
+    const client = supabase;
+    let lastActivityAt = Date.now();
+    let timeoutId: number | undefined;
+    let signingOut = false;
+
+    const signOutForIdle = () => {
+      if (signingOut) return;
+      signingOut = true;
+      window.sessionStorage.setItem(ADMIN_IDLE_LOGOUT_NOTICE_KEY, "1");
+      void client.auth.signOut();
+    };
+
+    const scheduleIdleCheck = () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+
+      const elapsed = Date.now() - lastActivityAt;
+      const remaining = ADMIN_IDLE_TIMEOUT_MS - elapsed;
+
+      if (remaining <= 0) {
+        signOutForIdle();
+        return;
+      }
+
+      timeoutId = window.setTimeout(scheduleIdleCheck, remaining);
+    };
+
+    const markActivity = () => {
+      if (signingOut) return;
+      lastActivityAt = Date.now();
+      scheduleIdleCheck();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        scheduleIdleCheck();
+      }
+    };
+
+    adminActivityEvents.forEach((eventName) => {
+      window.addEventListener(eventName, markActivity, { passive: true });
+    });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    scheduleIdleCheck();
+
+    return () => {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+      adminActivityEvents.forEach((eventName) => {
+        window.removeEventListener(eventName, markActivity);
+      });
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [enabled]);
+}
+
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (window.sessionStorage.getItem(ADMIN_IDLE_LOGOUT_NOTICE_KEY)) {
+      window.sessionStorage.removeItem(ADMIN_IDLE_LOGOUT_NOTICE_KEY);
+      setNotice("Sesi admin otomatis logout karena 5 menit tidak ada aktivitas.");
+    }
+  }, []);
 
   async function runAuth() {
     if (!supabase) return;
     setLoading(true);
     setError("");
+    setNotice("");
 
     try {
       const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
@@ -100,6 +183,7 @@ function LoginForm() {
             />
           </label>
           {error ? <p className="admin-error">{error}</p> : null}
+          {notice ? <p className="admin-success">{notice}</p> : null}
           <div className="admin-auth-actions">
             <button className="admin-primary-btn" disabled={loading} type="submit">
               {loading ? "Checking..." : "Sign in"}
@@ -438,6 +522,8 @@ function MessagesPanel({ messages, onRefresh }: { messages: ContactMessage[]; on
 }
 
 function Dashboard({ session }: { session: Session }) {
+  useAdminIdleLogout(true);
+
   const [activeTab, setActiveTab] = useState<AdminTab>("overview");
   const [content, setContent] = useState<PortfolioContent>(defaultContent);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
